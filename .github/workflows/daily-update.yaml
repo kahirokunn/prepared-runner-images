@@ -33,6 +33,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: ./runner/kubernetes/Dockerfile.ubuntu20.04
+          build-args: |
+            KUBECTL_VERSION=1.27.11
+            HELM_VERSION=3.14.2
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
