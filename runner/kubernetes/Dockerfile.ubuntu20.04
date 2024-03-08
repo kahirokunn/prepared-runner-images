@@ -1,0 +1,15 @@
+ARG HELM_VERSION
+ARG KUBECTL_VERSION
+FROM ghcr.io/actions-runner-controller/actions-runner-controller/actions-runner:latest
+
+# install kubectl command
+RUN curl -LO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
+    chmod +x ./kubectl && \
+    mv ./kubectl /usr/local/bin/kubectl
+# install helm command
+RUN curl -LO https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    tar zxvf helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    mv linux-amd64/helm /usr/local/bin/helm
+
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["entrypoint.sh"]
