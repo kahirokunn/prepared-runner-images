@@ -30,7 +30,7 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}/kubernetes
       - name: Build and push Docker image
-        uses: docker/build-push-action
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
