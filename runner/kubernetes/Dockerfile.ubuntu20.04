@@ -1,19 +1,91 @@
-FROM ghcr.io/actions-runner-controller/actions-runner-controller/actions-runner:latest
+FROM ghcr.io/actions/actions-runner:latest
 
-ARG HELM_VERSION
-ARG KUBECTL_VERSION
-
+SHELL ["/bin/bash", "-c"]
 USER root
-# install kubectl command
-RUN curl -LO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
-    chmod +x ./kubectl && \
-    mv ./kubectl /usr/local/bin/kubectl
-# install helm command
-RUN curl -LO https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
-    tar zxvf helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
-    mv linux-amd64/helm /usr/local/bin/helm
+
+ARG NODEJS_VERSION=21.7.3
+ARG TARGETPLATFORM
+
+RUN apt-get update && apt-get install -y \
+    npm \
+    git \
+    zip \
+    curl \
+    tar \
+    ssh \
+    sysbench \
+    wget \
+    rsync \
+    npm \
+    tzdata \
+    jq \
+    openssl \
+    unzip \
+    gzip \
+    xz-utils \
+    dnsutils \
+    golang-go
+
+# install js ecosystem
+RUN npm cache clean --force
+RUN npm install -g n
+RUN n $NODEJS_VERSION
+RUN npm update -g npm
+RUN npm install -g yarn@latest
+ENV PATH $PATH:/usr/local/n/versions/node/$NODEJS_VERSION/bin/
 
 USER runner
+
+# install deno
+RUN curl -fsSL https://deno.land/x/install/install.sh | sh
+ENV DENO_INSTALL /home/runner/.deno
+ENV PATH $DENO_INSTALL/bin:$PATH
+
+# install bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# install kubectl
+RUN KUBECTL_BINARY_ARCH=$(case "$TARGETPLATFORM" in "linux/amd64") echo "amd64" ;; "linux/arm64") echo "arm64" ;; *) exit 1 ;; esac) \
+    && curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/$KUBECTL_BINARY_ARCH/kubectl"
+RUN chmod +x ./kubectl
+RUN sudo mv ./kubectl /usr/local/bin/
+
+# install k9s
+RUN curl -sS https://webinstall.dev/k9s | bash
+
+# install stern
+RUN STERN_BINARY_ARCH=$(case "$TARGETPLATFORM" in "linux/amd64") echo "amd64" ;; "linux/arm64") echo "arm64" ;; *) exit 1 ;; esac) \
+    && curl -Lo stern.tar.gz "https://github.com/stern/stern/releases/download/v1.28.0/stern_1.28.0_linux_${STERN_BINARY_ARCH}.tar.gz"
+RUN tar -xzf ./stern.tar.gz
+RUN chmod +x ./stern
+RUN sudo mv ./stern /usr/local/bin/
+
+# install kustomize
+RUN curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+RUN sudo mv ./kustomize /usr/local/bin/
+
+# install helm
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# install k3d
+RUN curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+# install tilt
+RUN curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
+
+# install awscli v2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN sudo ./aws/install
+
+# install proto
+RUN curl -fsSL https://moonrepo.dev/install/proto.sh | bash -s -- --yes
+ENV PROTO_HOME /home/runner/.proto
+ENV PATH $PROTO_HOME/shims:$PROTO_HOME/bin:$PATH
+
+# install moon
+RUN proto plugin add moon "source:https://raw.githubusercontent.com/moonrepo/moon/master/proto-plugin.toml"
+RUN proto install moon
 
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["entrypoint.sh"]

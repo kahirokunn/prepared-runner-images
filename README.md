@@ -1,21 +1,20 @@
 # Prepared Runner Images - Runner + Prepared Tools
 
-This repository publishes container images for use with Self Hosted Runners. Each container image includes tools tailored for the following use cases:
+このリポジトリではSelf Hosted Runnerで利用するためのコンテナイメージを公開しています。各コンテナイメージにはそれぞれ下記のユースケースに合わせたツールが含まれています。
 
-| Use Case   | Image Name                                         | List of Included Tools |
-| ---------- | -------------------------------------------------- | ---------------------- |
-| Kubernetes | ghcr.io/megumish/prepared-runner-images/kubernetes | helm, kubectl          |
+| ユースケース | イメージ名                                         | 含まれるツールの一覧 |
+| ------------ | -------------------------------------------------- | -------------------- |
+| Kubernetes   | ghcr.io/megumish/prepared-runner-images/kubernetes | helm, kubectl        |
 
-# Background
+# 背景
 
-Self Hosted Runner images typically come with only the bare minimum tools installed. Therefore, if you want to prepare tools yourself, you need to choose one of the following methods:
+Self Hosted Runnerのイメージは通常最低限のツールしか入っていないことが多いです。そのため、自分で用意したいツールがある場合は、以下のどちらかの方法を取る必要があります。
 
-- Build and prepare a Runner image with the necessary tools included
-- Use setup actions to fetch the necessary tools at the time of action execution
+- 必要なツールが入ったRunnerのイメージをビルドして用意しておく
+- Setup系のアクションを利用することで、アクション実行時に必要なツールを取得する
 
-With the former method, you need to build the Runner image yourself. Also, if the Runner executable is outdated, it cannot be registered with GitHub as a runner, so it needs to be updated regularly.
+前者の方法では、Runnerのイメージを自分でビルドする必要があります。また、Runnerの実行ファイルが古い場合はランナーとしてGitHubに登録することができないため、定期的にアップデートする必要があります。
 
-With the latter method, even with the most basic Runner image, you can fetch the necessary tools at the time of action execution. However, this requires time and network communication to fetch the necessary tools each time an action is executed. This can be mitigated by using caching, though.
+後者の方法では、最低限のRunnerイメージを利用するだけでも後からアクション実行時に必要なツールを取得することができます。しかし、アクションを実行するたびに必要なツールを取得するための時間とネットワーク通信が必要になります。ただし、これはキャッシュを使うことで解決可能ではあります。
 
-This repository is for those who prefer the former method. By publishing images with the necessary tools already included, it reduces the hassle of building them yourself.
-
+このリポジトリは前者の方法を利用するためのものです。予め必要なツールの入ったイメージを公開しておくことで、自前でのビルドの手間を減らします。
