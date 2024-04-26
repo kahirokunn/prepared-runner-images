@@ -31,7 +31,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.repository }}/kubernetes
+            ghcr.io/${{ github.repository }}/actions-runner
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
