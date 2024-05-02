@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y \
     gzip \
     xz-utils \
     dnsutils \
-    golang-go
+    golang-go \
+    time
 
 # install js ecosystem
 RUN npm cache clean --force
