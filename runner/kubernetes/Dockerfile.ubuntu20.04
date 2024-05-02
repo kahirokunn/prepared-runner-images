@@ -45,6 +45,12 @@ ENV PATH $DENO_INSTALL/bin:$PATH
 # install bun
 RUN curl -fsSL https://bun.sh/install | bash
 
+# install yq
+RUN YQ_BINARY_ARCH=$(case "$TARGETPLATFORM" in "linux/amd64") echo "amd64" ;; "linux/arm64") echo "arm64" ;; *) exit 1 ;; esac) \
+    && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_$YQ_BINARY_ARCH -O ./yq
+RUN chmod +x ./yq
+RUN sudo mv ./yq /usr/local/bin/
+
 # install kubectl
 RUN KUBECTL_BINARY_ARCH=$(case "$TARGETPLATFORM" in "linux/amd64") echo "amd64" ;; "linux/arm64") echo "arm64" ;; *) exit 1 ;; esac) \
     && curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/$KUBECTL_BINARY_ARCH/kubectl"
