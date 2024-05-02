@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'main'
+    tags:
+      - 'v*'
   schedule:
     - cron: "0 0 1 * *"
   workflow_dispatch: {}
@@ -39,7 +41,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          file: ./runner/kubernetes/Dockerfile.ubuntu20.04
+          file: ./runner/kubernetes/Dockerfile.actions-runner-latest
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
