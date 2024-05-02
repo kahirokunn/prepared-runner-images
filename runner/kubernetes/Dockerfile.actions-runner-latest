@@ -3,7 +3,7 @@ FROM ghcr.io/actions/actions-runner:latest
 SHELL ["/bin/bash", "-c"]
 USER root
 
-ARG NODEJS_VERSION=21.7.3
+ARG NODEJS_VERSION=22.0.0
 ARG TARGETPLATFORM
 
 RUN apt-get update && apt-get install -y \
