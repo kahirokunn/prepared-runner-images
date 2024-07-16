@@ -42,7 +42,7 @@ ENV BUILDX_CONFIG=/home/runner/.docker/buildx
 # install docker compose
 ENV DOCKER_CONFIG /usr/local/lib/docker
 RUN DOCKER_COMPOSE_BINARY_ARCH=$(case "$TARGETPLATFORM" in "linux/amd64") echo "x86_64" ;; "linux/arm64") echo "aarch64" ;; *) exit 1 ;; esac) \
-    && curl -SL https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-$DOCKER_COMPOSE_BINARY_ARCH -o ./docker-compose
+    && curl -SL https://github.com/docker/compose/releases/download/v2.28.1/docker-compose-linux-$DOCKER_COMPOSE_BINARY_ARCH -o ./docker-compose
 RUN chmod +x ./docker-compose
 RUN sudo mv ./docker-compose $DOCKER_CONFIG/cli-plugins/docker-compose
 
